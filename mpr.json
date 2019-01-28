@@ -9,10 +9,7 @@
 				"name": "classrooms",
 				"fields": [
 					{ "name": "name", "title": "Name", "required": true, "exportable": true },
-					{ "name": "phone", "title": "Phone", "default": "-", "exportable": true },
-					{ "name": "email", "title": "E-mail", "type": "email", "exportable": true },
-					{ "name": "note", "title": "Note", "input": "textarea", "exportable": true, "show_in_dataview": false },
-					{ "name": "invoiced", "title": "Invoiced", "type": "float", "show_in_insert_form": false, "show_in_update_form": false, "exportable": true }
+					{ "name": "description", "title": "Description", "exportable": true, "show_in_dataview": false }
 				],
 				"owner_field": "ownerId",
 
@@ -20,13 +17,12 @@
 				"roles_allowed_to_update": ["owner"],
 				"roles_allowed_to_delete": ["owner"],
 
-				"before_insert_code": "if(!doc.invoiced) doc.invoiced = 0;"
 			},
 
 			{
 				"name": "students",
 				"fields": [
-					{ "name": "invoiceNumber", "title": "Invoice number", "default": "", "required": true, "exportable": true },
+					{ "name": "studentNumber", "title": "Student Number", "default": "", "required": true, "exportable": true },
 					{ "name": "date", "title": "Invoice date", "type": "date", "format": "MM-DD-YYYY", "input": "datepicker", "default": "today", "required": true, "exportable": true },
 
 					{
@@ -71,10 +67,7 @@
 
 				"before_insert_code": "if(!doc.totalAmount) doc.totalAmount = 0;",
 
-				"after_insert_code": "var sum = 0; Students.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});",
-				"after_update_code": "var sum = 0; Students.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});",
-				"after_remove_code": "var sum = 0; Students.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});"
-			},
+				},
 
 			{
 				"name": "student_journals",
@@ -126,7 +119,7 @@
 				"name": "invoice_list",
 				"collection": "students",
 				"filter": {},
-				"options": "{ \"sort\": { \"invoiceNumber\": -1 } }"
+				"options": "{ \"sort\": { \"studentNumber\": -1 } }"
 			},
 			{
 				"name": "invoices_empty",
