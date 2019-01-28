@@ -1,0 +1,6 @@
+
+
+~/montessori/mpr/meteor
+
+rm -rf ~/montessori/mpr
+meteor-kitchen mpr.json ../mpr --react

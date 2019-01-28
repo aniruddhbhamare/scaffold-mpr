@@ -1,12 +1,12 @@
 {
 	"application": {
-		"title": "MPR v0.0.1",
+		"title": "MPR v0.0.2",
 
 		"theme": "bootswatch-united",
 
 		"collections": [
 			{
-				"name": "customers",
+				"name": "classrooms",
 				"fields": [
 					{ "name": "name", "title": "Name", "required": true, "exportable": true },
 					{ "name": "phone", "title": "Phone", "default": "-", "exportable": true },
@@ -30,25 +30,25 @@
 					{ "name": "date", "title": "Invoice date", "type": "date", "format": "MM-DD-YYYY", "input": "datepicker", "default": "today", "required": true, "exportable": true },
 
 					{
-						"name": "customerId",
-						"title": "Customer",
+						"name": "classroomId",
+						"title": "Classroom",
 						"required": true,
 						"input": "select",
-						"lookup_query_name": "customer_list",
+						"lookup_query_name": "classroom_list",
 						"lookup_field": "name",
 						"lookup_key": "_id",
 						"show_in_dataview": false,
 						"show_in_read_only_form": false,
 						"exportable": false,
 
-						"join_collection": "customers",
+						"join_collection": "classrooms",
 						"join_fields": ["name"],
-						"join_container": "customer"
+						"join_container": "classroom"
 					},
 
 					{
-						"name": "customer.name",
-						"title": "Customer",
+						"name": "classroom.name",
+						"title": "Classroom",
 						"show_in_insert_form": false,
 						"show_in_update_form": false,
 						"exportable": true
@@ -71,9 +71,9 @@
 
 				"before_insert_code": "if(!doc.totalAmount) doc.totalAmount = 0;",
 
-				"after_insert_code": "var sum = 0; Invoices.find({ customerId: doc.customerId }).map(function(item) { sum += item.totalAmount; }); Customers.update({ _id: doc.customerId }, { $set: { invoiced: sum }});",
-				"after_update_code": "var sum = 0; Invoices.find({ customerId: doc.customerId }).map(function(item) { sum += item.totalAmount; }); Customers.update({ _id: doc.customerId }, { $set: { invoiced: sum }});",
-				"after_remove_code": "var sum = 0; Invoices.find({ customerId: doc.customerId }).map(function(item) { sum += item.totalAmount; }); Customers.update({ _id: doc.customerId }, { $set: { invoiced: sum }});"
+				"after_insert_code": "var sum = 0; Invoices.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});",
+				"after_update_code": "var sum = 0; Invoices.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});",
+				"after_remove_code": "var sum = 0; Invoices.find({ classroomId: doc.classroomId }).map(function(item) { sum += item.totalAmount; }); Classrooms.update({ _id: doc.classroomId }, { $set: { invoiced: sum }});"
 			},
 
 			{
@@ -104,22 +104,22 @@
 
 		"queries": [
 			{
-				"name": "customer_list",
-				"collection": "customers",
+				"name": "classroom_list",
+				"collection": "classrooms",
 				"filter": "{}",
 				"options": "{  \"sort\": { \"name\": 1 } }"
 			},
 			{
-				"name": "customers_empty",
-				"collection": "customers",
+				"name": "classrooms_empty",
+				"collection": "classrooms",
 				"filter": "{\"_id\": null}",
 				"find_one": true
 			},
 			{
-				"name": "customer_details",
-				"collection": "customers",
+				"name": "classroom_details",
+				"collection": "classrooms",
 				"find_one": true,
-				"filter": "{ \"_id\": \":customerId\" }",
+				"filter": "{ \"_id\": \":classroomId\" }",
 				"options": "{}"
 			},
 			{
@@ -221,23 +221,23 @@
 				},
 
 				{
-					"name": "customers",
+					"name": "classrooms",
 					"components": [
 						{
 							"name": "view",
 							"type": "data_view",
-							"title": "Customers",
-							"text_if_empty": "No customers :(",
-							"query_name": "customer_list",
+							"title": "Classrooms",
+							"text_if_empty": "No classrooms :(",
+							"query_name": "classroom_list",
 							"page_size": 20,
-							"insert_route": "customers.insert",
-							"edit_route": "customers.edit",
+							"insert_route": "classrooms.insert",
+							"edit_route": "classrooms.edit",
 							"edit_route_params": [
-								{ "name": "customerId", "value": "this._id" }
+								{ "name": "classroomId", "value": "this._id" }
 							],
-							"details_route": "customers.details",
+							"details_route": "classrooms.details",
 							"details_route_params": [
-								{ "name": "customerId", "value": "this._id" }
+								{ "name": "classroomId", "value": "this._id" }
 							]
 						}
 					],
@@ -250,41 +250,41 @@
 									"name": "insert_form",
 									"type": "form",
 									"mode": "insert",
-									"title": "New customer",
-									"query_name": "customers_empty",
-									"submit_route": "customers",
-									"cancel_route": "customers"
+									"title": "New classroom",
+									"query_name": "classrooms_empty",
+									"submit_route": "classrooms",
+									"cancel_route": "classrooms"
 								}
 							]
 						},
 						{
 							"name": "details",
-							"route_params": ["customerId"],
+							"route_params": ["classroomId"],
 							"components": [
 								{
 									"name": "details_form",
 									"type": "form",
 									"mode": "read_only",
 									"title": "Details",
-									"query_name": "customer_details",
-									"close_route": "customers",
-									"back_route": "customers"
+									"query_name": "classroom_details",
+									"close_route": "classrooms",
+									"back_route": "classrooms"
 								}
 							]
 						},
 
 						{
 							"name": "edit",
-							"route_params": ["customerId"],
+							"route_params": ["classroomId"],
 							"components": [
 								{
 									"name": "edit_form",
 									"type": "form",
 									"mode": "update",
-									"title": "Edit customer",
-									"submit_route": "customers",
-									"cancel_route": "customers",
-									"query_name": "customer_details"
+									"title": "Edit classroom",
+									"submit_route": "classrooms",
+									"cancel_route": "classrooms",
+									"query_name": "classroom_details"
 								}
 							]
 						}
@@ -495,7 +495,7 @@
 					"items": [
 						{ "title": "Home", "route": "home_private" },
 						{ "title": "Invoices", "route": "invoices" },
-						{ "title": "Customers", "route": "customers" }
+						{ "title": "Classrooms", "route": "classrooms" }
 					]
 				},
 				{
