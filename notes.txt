@@ -3,4 +3,9 @@
 ~/montessori/mpr/meteor
 
 rm -rf ~/montessori/mpr
-meteor-kitchen mpr.json ../mpr --react
+meteor-kitchen ~/montessori/scaffold-mpr/mpr.json ~/montessori/mpr --react
+
+cd ~/montessori/mpr
+meteor
+
+
