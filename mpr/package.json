@@ -1,0 +1,20 @@
+{
+  "name": "mpr",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "bcrypt": "^3.0.3",
+    "marked": "^0.6.0",
+    "meteor-node-stubs": "^0.4.1",
+    "meteor-user-roles": "^1.1.7",
+    "moment": "^2.24.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-dom": "^16.7.0",
+    "react-mounter": "^1.2.0"
+  }
+}
