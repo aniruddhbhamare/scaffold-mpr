@@ -1,6 +1,6 @@
 {
 	"application": {
-		"title": "MPR v0.0.0.5",
+		"title": "MPR v0.0.0.9",
 
 		"theme": "bootswatch-united",
 
@@ -15,7 +15,7 @@
 
 				"roles_allowed_to_read": ["owner"],
 				"roles_allowed_to_update": ["owner"],
-				"roles_allowed_to_delete": ["owner"],
+				"roles_allowed_to_delete": ["owner"]
 
 			},
 
@@ -23,7 +23,10 @@
 				"name": "students",
 				"fields": [
 					{ "name": "studentNumber", "title": "Student Number", "default": "", "required": true, "exportable": true },
-					{ "name": "date", "title": "Invoice date", "type": "date", "format": "MM-DD-YYYY", "input": "datepicker", "default": "today", "required": true, "exportable": true },
+					{ "name": "firstName", "title": "First Name", "default": "", "required": true, "exportable": true },
+					{ "name": "middleName", "title": "Middle Name", "default": "", "required": false, "exportable": true },
+					{ "name": "lastName", "title": "Last Name", "default": "", "required": true, "exportable": true },
+					{ "name": "birthDate", "title": "Birth date", "type": "date", "format": "MM-DD-YYYY", "input": "datepicker", "default": "today", "required": true, "exportable": true },
 
 					{
 						"name": "classroomId",
@@ -48,24 +51,14 @@
 						"show_in_insert_form": false,
 						"show_in_update_form": false,
 						"exportable": true
-					},
-
-					{
-						"name": "totalAmount",
-						"title": "Total",
-						"type": "float",
-						"show_in_insert_form": false,
-						"show_in_update_form": false,
-						"exportable": true
 					}
+
 				],
 
 				"owner_field": "ownerId",
 				"roles_allowed_to_read": ["owner"],
 				"roles_allowed_to_update": ["owner"],
-				"roles_allowed_to_delete": ["owner"],
-
-				"before_insert_code": "if(!doc.totalAmount) doc.totalAmount = 0;",
+				"roles_allowed_to_delete": ["owner"]
 
 				},
 
@@ -87,11 +80,11 @@
 
 				"before_update_code": "if(!modifier.$set) return; var quantity = modifier.$set.quantity || doc.quantity; var price = modifier.$set.price || doc.price; modifier.$set.amount = quantity * price;",
 
-				"after_insert_code": "var sum = 0; StudentJournals.find({ invoiceId: doc.invoiceId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.invoiceId }, { $set: { totalAmount: sum }});",
+				"after_insert_code": "var sum = 0; StudentJournals.find({ studentId: doc.studentId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.studentId }, { $set: { totalAmount: sum }});",
 
-				"after_update_code": "var sum = 0; StudentJournals.find({ invoiceId: doc.invoiceId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.invoiceId }, { $set: { totalAmount: sum }});",
+				"after_update_code": "var sum = 0; StudentJournals.find({ studentId: doc.studentId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.studentId }, { $set: { totalAmount: sum }});",
 
-				"after_remove_code": "var sum = 0; StudentJournals.find({ invoiceId: doc.invoiceId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.invoiceId }, { $set: { totalAmount: sum }});"
+				"after_remove_code": "var sum = 0; StudentJournals.find({ studentId: doc.studentId }).map(function(item) { sum += item.amount; }); Students.update({ _id: doc.studentId }, { $set: { totalAmount: sum }});"
 			}
 		],
 
@@ -116,39 +109,39 @@
 				"options": "{}"
 			},
 			{
-				"name": "invoice_list",
+				"name": "student_list",
 				"collection": "students",
 				"filter": {},
 				"options": "{ \"sort\": { \"studentNumber\": -1 } }"
 			},
 			{
-				"name": "invoices_empty",
+				"name": "students_empty",
 				"collection": "students",
 				"filter": "{ \"_id\": null }",
 				"options": "{}",
 				"find_one": true
 			},
 			{
-				"name": "invoice_details",
+				"name": "student_details",
 				"collection": "students",
-				"filter": "{ \"_id\": \":invoiceId\" }",
+				"filter": "{ \"_id\": \":studentId\" }",
 				"find_one": true
 			},
 			{
 				"name": "student_journals",
 				"collection": "student_journals",
-				"filter": "{ \"invoiceId\": \":invoiceId\" }"
+				"filter": "{ \"studentId\": \":studentId\" }"
 			},
 			{
-				"name": "invoice_items_empty",
+				"name": "student_journals_empty",
 				"collection": "student_journals",
 				"filter": "{ \"_id\": null }",
 				"find_one": true
 			},
 			{
-				"name": "invoice_item",
+				"name": "student_journal",
 				"collection": "student_journals",
-				"filter": "{ \"_id\": \":itemId\" }",
+				"filter": "{ \"_id\": \":journalId\" }",
 				"find_one": true
 			},
 			{
@@ -292,16 +285,16 @@
 							"type": "data_view",
 							"title": "Students",
 							"text_if_empty": "No students :(",
-							"query_name": "invoice_list",
+							"query_name": "student_list",
 							"page_size": 20,
 							"insert_route": "students.insert",
 							"edit_route": "students.edit",
 							"edit_route_params": [
-								{ "name": "invoiceId", "value": "this._id" }
+								{ "name": "studentId", "value": "this._id" }
 							],
 							"details_route": "students.details",
 							"details_route_params": [
-								{ "name": "invoiceId", "value": "this._id" }
+								{ "name": "studentId", "value": "this._id" }
 							]
 						}
 					],
@@ -316,11 +309,11 @@
 									"mode": "insert",
 									"title": "New invoice",
 
-									"query_name": "invoices_empty",
+									"query_name": "students_empty",
 
 									"submit_route": "students.details",
 									"submit_route_params": [
-										{ "name": "invoiceId", "value": "result"}
+										{ "name": "studentId", "value": "result"}
 									],
 									"cancel_route": "students"
 								}
@@ -329,15 +322,15 @@
 						{
 							"name": "details",
 							"template": "page_subcontent_tabnav",
-							"route_params": ["invoiceId"],
+							"route_params": ["studentId"],
 							"components": [
 								{
 									"name": "details_form",
 									"type": "form",
 									"mode": "read_only",
-									"title": "Invoice details",
+									"title": "Student details",
 									"layout": "horizontal",
-									"query_name": "invoice_details",
+									"query_name": "student_details",
 									"back_route": "students"
 								}
 
@@ -357,12 +350,12 @@
 											"insert_button_title": "Add item",
 											"insert_route": "students.details.insert",
 											"insert_route_params": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId" }
+												{ "name": "studentId", "value": "this.params.studentId" }
 											],
 											"edit_route": "students.details.edit",
 											"edit_route_params": [
-												{ "name": "invoiceId", "value": "UI._parentData(1).params.invoiceId" },
-												{ "name": "itemId", "value": "this._id" }
+												{ "name": "studentId", "value": "UI._parentData(1).params.studentId" },
+												{ "name": "journalId", "value": "this._id" }
 											]
 										}
 									]
@@ -376,19 +369,19 @@
 											"type": "form",
 											"mode": "insert",
 											"title": "Add item",
-											"query_name": "invoice_items_empty",
+											"query_name": "student_journals_empty",
 
 											"hidden_fields": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId" }
+												{ "name": "studentId", "value": "this.params.studentId" }
 											],
 
 											"submit_route": "students.details",
 											"submit_route_params": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId"}
+												{ "name": "studentId", "value": "this.params.studentId"}
 											],
 											"cancel_route": "students.details",
 											"cancel_route_params": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId"}
+												{ "name": "studentId", "value": "this.params.studentId"}
 											]
 										}
 									]
@@ -396,21 +389,21 @@
 
 								{
 									"name": "edit",
-									"route_params": ["itemId"],
+									"route_params": ["journalId"],
 									"components": [
 										{
 											"name": "edit_form",
 											"type": "form",
 											"mode": "update",
 											"title": "Edit item",
-											"query_name": "invoice_item",
+											"query_name": "student_journal",
 											"submit_route": "students.details",
 											"submit_route_params": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId"}
+												{ "name": "studentId", "value": "this.params.studentId"}
 											],
 											"cancel_route": "students.details",
 											"cancel_route_params": [
-												{ "name": "invoiceId", "value": "this.params.invoiceId"}
+												{ "name": "studentId", "value": "this.params.studentId"}
 											]
 										}
 									]
@@ -420,7 +413,7 @@
 
 						{
 							"name": "edit",
-							"route_params": ["invoiceId"],
+							"route_params": ["studentId"],
 							"components": [
 								{
 									"name": "edit_form",
@@ -429,7 +422,7 @@
 									"title": "Edit invoice",
 									"submit_route": "students",
 									"cancel_route": "students",
-									"query_name": "invoice_details"
+									"query_name": "student_details"
 								}
 							]
 						}
