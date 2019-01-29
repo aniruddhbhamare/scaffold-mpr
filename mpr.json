@@ -1,10 +1,20 @@
 {
 	"application": {
-		"title": "MPR v0.0.0.10",
+		"title": "MPR v0.0.0.12",
 
 		"theme": "bootswatch-united",
 
 		"collections": [
+			{
+				"name": "activitys",
+				"fields": [
+					{ "name": "activity", "title": "Activity", "required": true, "exportable": true },
+					{ "name": "subject", "title": "Subject", "exportable": true, "show_in_dataview": true },
+					{ "name": "category", "title": "Category", "exportable": true, "show_in_dataview": true }
+				
+				]
+			},
+
 			{
 				"name": "classrooms",
 				"fields": [
@@ -97,6 +107,25 @@
 				"collection": "classrooms",
 				"find_one": true,
 				"filter": "{ \"_id\": \":classroomId\" }",
+				"options": "{}"
+			},
+			{
+				"name": "activity_list",
+				"collection": "activitys",
+				"filter": "{}",
+				"options": "{  \"sort\": { \"activity\": 1 } }"
+			},
+			{
+				"name": "activitys_empty",
+				"collection": "activitys",
+				"filter": "{\"_id\": null}",
+				"find_one": true
+			},
+			{
+				"name": "activity_details",
+				"collection": "activitys",
+				"find_one": true,
+				"filter": "{ \"_id\": \":activityId\" }",
 				"options": "{}"
 			},
 			{
@@ -267,7 +296,76 @@
 						}
 					]
 				},
+				{
+					"name": "activitys",
+					"components": [
+						{
+							"name": "view",
+							"type": "data_view",
+							"title": "Activitys",
+							"text_if_empty": "No activitys :(",
+							"query_name": "activity_list",
+							"page_size": 20,
+							"insert_route": "activitys.insert",
+							"edit_route": "activitys.edit",
+							"edit_route_params": [
+								{ "name": "activityId", "value": "this._id" }
+							],
+							"details_route": "activitys.details",
+							"details_route_params": [
+								{ "name": "activityId", "value": "this._id" }
+							]
+						}
+					],
 
+					"pages": [
+						{
+							"name": "insert",
+							"components": [
+								{
+									"name": "insert_form",
+									"type": "form",
+									"mode": "insert",
+									"title": "New activity",
+									"query_name": "activitys_empty",
+									"submit_route": "activitys",
+									"cancel_route": "activitys"
+								}
+							]
+						},
+						{
+							"name": "details",
+							"route_params": ["activityId"],
+							"components": [
+								{
+									"name": "details_form",
+									"type": "form",
+									"mode": "read_only",
+									"title": "Details",
+									"query_name": "activity_details",
+									"close_route": "activitys",
+									"back_route": "activitys"
+								}
+							]
+						},
+
+						{
+							"name": "edit",
+							"route_params": ["activityId"],
+							"components": [
+								{
+									"name": "edit_form",
+									"type": "form",
+									"mode": "update",
+									"title": "Edit activity",
+									"submit_route": "activitys",
+									"cancel_route": "activitys",
+									"query_name": "activity_details"
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "students",
 					"components": [
@@ -472,7 +570,8 @@
 					"items": [
 						{ "title": "Home", "route": "home_private" },
 						{ "title": "Students", "route": "students" },
-						{ "title": "Classrooms", "route": "classrooms" }
+						{ "title": "Classrooms", "route": "classrooms" },
+						{ "title": "Activities", "route": "activitys" }
 					]
 				},
 				{
