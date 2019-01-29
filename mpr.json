@@ -76,7 +76,22 @@
 				"name": "student_journals",
 				"fields": [
 					{ "name": "subject", "title": "Subject", "required": true, "exportable": true },
-					{ "name": "activity", "title": "Activity", "required": true, "exportable": true },
+					{
+						"name": "activityId",
+						"title": "Activity",
+						"required": true,
+						"input": "select",
+						"lookup_query_name": "activity_list",
+						"lookup_field": "activity",
+						"lookup_key": "_id",
+						"show_in_dataview": false,
+						"show_in_read_only_form": false,
+						"exportable": false,
+
+						"join_collection": "activitys",
+						"join_fields": ["activity"],
+						"join_container": "activity"
+					},
 					{ "name": "activityDate", "title": "Activity Date", "type": "date", "format": "MM-DD-YYYY", "input": "datepicker", "default": "today", "required": true, "exportable": true },
 					{ "name": "note", "title": "Note", "required": false, "exportable": true }
 				],
