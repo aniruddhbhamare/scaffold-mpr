@@ -8,4 +8,9 @@ meteor-kitchen ~/montessori/scaffold-mpr/mpr.json ~/montessori/mpr --react
 cd ~/montessori/mpr
 meteor
 
+//windows
+meteor-kitchen C:\root\kindlespark\proj\montessori\scaffold-mpr\mpr.json C:\root\kindlespark\proj\montessori\mpr --react
+
+cd C:\root\kindlespark\proj\montessori\mpr
+meteor
 
